@@ -6,6 +6,8 @@ module ActionWire
   end
 
   class Engine < ::Rails::Engine
+    #isolate_namespace ActionWire
+
 
   end
 end
