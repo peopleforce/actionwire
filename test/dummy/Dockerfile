@@ -31,4 +31,4 @@ COPY package.json yarn.lock ./
 # Copy the main application.
 COPY . ./
 
-CMD ["bin/rails", "server", "--binding=0.0.0.0", "--port=3000"]
+CMD ["bundle", "exec", "rails", "server", "--binding=0.0.0.0", "--port=3000"]
