@@ -2,25 +2,33 @@
 
 module ActionWire
   class Component
+    include ActiveModel::Model
+    include ActiveModel::Attributes
 
-    attr_accessor :id
+    attribute :id, :string
 
-    def initialize
+    def initialize(params = {})
       super
+      params.each do |key, value|
+        setter = "#{key}="
+        send(setter, value) if respond_to?(setter.to_sym, false)
+      end
     end
 
     def data
-      {
-        id: @id
-      }
+      d = {}
+      self.class.new.attributes.except("id").each do |key, value|
+        d[key] = send(key)
+      end
+      d
     end
 
     def render_in(view_context)
-      @id = SecureRandom.uuid
-      @snapshot = {
+      id = SecureRandom.uuid
+      snapshot = {
         data: data,
         memo: {
-          id: @id,
+          id: id,
           name: self.class.name,
           path: "/",
           method: "GET",
@@ -32,11 +40,9 @@ module ActionWire
         checksum: "checksum"
       }.to_json
 
-      #encode = ActiveSupport::JSON.encode(@snapshot)
-
       <<~CONTENT.html_safe
-        <div wire:snapshot="#{ CGI::escapeHTML(@snapshot)}" wire:effects="[]" wire:id="#{@id}">
-                #{content}
+        <div wire:snapshot="#{ CGI::escapeHTML(snapshot)}" wire:effects="[]" wire:id="#{id}">
+                #{defined?(content) ? content : @content}
         </div>
       CONTENT
     end

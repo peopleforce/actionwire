@@ -12,9 +12,29 @@ class ActionWiresController < ::ActionController::Base
       # json parse with symbols
       snapshot = JSON.parse(component[:snapshot])
 
+      data = snapshot["data"]
+      component_instance = snapshot["memo"]["name"].constantize.new
+      data.each do |k, v|
+        component_instance.public_send("#{k}=", v)
+      end
+
+      # updates
+      if component[:updates].present?
+        component[:updates].each do |k, v|
+          component_instance.public_send("#{k}=", v)
+        end
+      end
+
+      # calls
+      for call in component[:calls]
+        component_instance.public_send(call[:method])
+      end
+
+      view = ActionView::Base.new(ActionView::LookupContext.new([]), {}, nil)
+
       components << {
         effects: {
-          html: "<div wire:id=\"#{snapshot["memo"]["id"]}\"> asdasd</div>",
+          html: "<div wire:id=\"#{snapshot["memo"]["id"]}\">#{component_instance.render_in(view)}</div>",
           returns: []
         },
         snapshot: snapshot.to_json

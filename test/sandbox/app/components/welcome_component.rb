@@ -1,9 +1,5 @@
 class WelcomeComponent < ActionWire::Component
-  attr_reader :full_name, :description
-
-  def initialize(full_name:)
-    @full_name = full_name
-  end
+  attribute :full_name, :string
 
   def content
     <<~CONTENT.html_safe
