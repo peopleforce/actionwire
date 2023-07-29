@@ -1,23 +1,19 @@
 class SearchComponent < ActionWire::Component
   attribute :query
 
-  def content
-    items = ["apple", "banana", "orange", "pear", "grape", "pineapple", "strawberry"]
+  def before_render
+    @items = items
 
     if query.present?
-      items = items.select { |item| item.include?(query) }
+      @items = @items.select { |item| item.include?(query) }
     end
+  end
 
-    <<~CONTENT.html_safe
-      <div>
-        <input wire:model.live="query">
-      </div>
+  def noop
 
-      <div x-cloak x-show="$wire.query" >
-         <div wire:loading.remove>Searching for "<span x-text='$wire.query'></span>"...</div>
+  end
 
-          <div>Found #{items.count} results</div>
-      </div>
-    CONTENT
+  def items
+    ["apple", "banana", "orange", "pear", "grape", "pineapple", "strawberry"]
   end
 end

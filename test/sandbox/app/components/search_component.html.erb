@@ -1,0 +1,9 @@
+<div>
+  <input wire:model.live="query">
+</div>
+
+<div x-cloak x-show="$wire.query">
+  <div wire:loading.remove>Searching for "<%= query %>"...</div>
+
+  <div>Found <%= @items.count %> results</div>
+</div>

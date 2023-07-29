@@ -14,6 +14,9 @@ class ActionWiresController < ::ActionController::Base
 
       data = snapshot["data"]
       component_instance = snapshot["memo"]["name"].constantize.new
+
+      component_instance.before_render if defined?(component_instance.before_render)
+
       data.each do |k, v|
         component_instance.public_send("#{k}=", v)
       end

@@ -5,6 +5,8 @@ module ActionWire
     include ActiveModel::Model
     include ActiveModel::Attributes
 
+    require 'erb'
+
     attribute :id, :string
 
     def initialize(params = {})
@@ -24,6 +26,8 @@ module ActionWire
     end
 
     def render_in(view_context)
+      before_render if defined?(before_render)
+
       id = SecureRandom.uuid
       snapshot = {
         data: data,
@@ -40,9 +44,18 @@ module ActionWire
         checksum: "checksum"
       }.to_json
 
+      # render erb file to string
+      rendered_template = if defined?(content)
+                            content
+                          else
+                            file_path, line_number = get_relative_path_to_class(self.class)
+                            template = File.read(file_path.gsub(".rb", "") + ".html.erb")
+                            ERB.new(template).result(binding)
+                          end
+
       <<~CONTENT.html_safe
         <div wire:snapshot="#{ CGI::escapeHTML(snapshot)}" wire:effects="[]" wire:id="#{id}">
-                #{defined?(content) ? content : @content}
+                #{rendered_template}
         </div>
       CONTENT
     end
@@ -64,5 +77,12 @@ module ActionWire
       end
       CODE
     end
+
+    def get_relative_path_to_class(klass)
+      full_path, _ = klass.instance_method(:noop).source_location
+      relative_path = Pathname.new(full_path).relative_path_from(Rails.root)
+      relative_path.to_s
+    end
+
   end
 end
