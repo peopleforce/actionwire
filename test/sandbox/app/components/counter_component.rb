@@ -1,7 +1,7 @@
 class CounterComponent < ActionWire::Component
   attribute :count, :integer, default: 0
 
-  def content
+  def template
     <<~CONTENT.html_safe
       <div>
           <h1>#{ count }</h1>

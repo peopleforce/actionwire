@@ -45,8 +45,8 @@ module ActionWire
       }.to_json
 
       # render erb file to string
-      rendered_template = if defined?(content)
-                            content
+      rendered_template = if defined?(template)
+                            template
                           else
                             file_path, line_number = get_relative_path_to_class(self.class)
                             template = File.read(file_path.gsub(".rb", "") + ".html.erb")
