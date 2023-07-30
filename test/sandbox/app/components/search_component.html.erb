@@ -1,9 +1,17 @@
 <div>
-  <input wire:model.live="query">
+  <input wire:model.live="query" type="text" placeholder="Search fruits">
 </div>
 
 <div x-cloak x-show="$wire.query">
-  <div wire:loading.remove>Searching for "<%= query %>"...</div>
+  <div wire:loading>Searching for "<%= query %>"...</div>
 
-  <div>Found <%= @items.count %> results</div>
+  <div wire:loading.remove>
+    <div>Found <%= @items.count %> results for "<%= query %>"</div>
+
+    <ul>
+      <% for item in @items %>
+        <li><%= item %></li>
+      <% end %>
+    </ul>
+  </div>
 </div>
