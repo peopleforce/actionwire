@@ -62,24 +62,6 @@ module ActionWire
       CONTENT
     end
 
-    def self.slot(name)
-      class_eval <<-CODE, __FILE__, __LINE__ + 1
-      attr_writer :#{name}
-      
-      def #{name}(...)
-        if block_given?
-          @#{name} = @view_context.capture(...)
-        else
-          @#{name}
-        end
-      end
-
-      def #{name}?
-        !!@#{name}
-      end
-      CODE
-    end
-
     def get_relative_path_to_class(klass)
       full_path, _ = klass.instance_method(:noop).source_location
       relative_path = Pathname.new(full_path).relative_path_from(Rails.root)
