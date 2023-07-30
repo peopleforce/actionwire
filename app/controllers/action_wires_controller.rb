@@ -30,7 +30,8 @@ class ActionWiresController < ::ActionController::Base
 
       # calls
       for call in component[:calls]
-        component_instance.public_send(call[:method])
+        params = call[:params] || []
+        component_instance.public_send(call[:method], *params)
       end
 
       view = ActionView::Base.new(ActionView::LookupContext.new([]), {}, nil)

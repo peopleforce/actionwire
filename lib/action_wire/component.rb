@@ -8,9 +8,11 @@ module ActionWire
     require 'erb'
 
     attribute :id, :string
+    attribute :params, array: true, default: []
 
     def initialize(params = {})
       super
+
       params.each do |key, value|
         setter = "#{key}="
         send(setter, value) if respond_to?(setter.to_sym, false)

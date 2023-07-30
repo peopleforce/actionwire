@@ -1,5 +1,5 @@
 class SearchComponent < ActionWire::Component
-  attribute :query
+  attribute :query, :string
 
   def before_render
     @items = items
